@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #! python3
 import networkx as nx
 
@@ -216,4 +215,3 @@ if __name__ == "__main__":
     G.add_node('D', duration=2)  # editing existing node
     print('\nCrushing D, from 4 to 2, gives:')
     print(G.critical_path_length, G.critical_path)
->>>>>>> c62a7588ee0475c7e8f2dfe380e171d8e88ea536
