@@ -3,7 +3,6 @@ import networkx as nx
 
 
 class CPM(nx.DiGraph):
-
     def __init__(self):
         super().__init__()
         self._dirty = True
@@ -44,18 +43,21 @@ class CPM(nx.DiGraph):
 
     def _forward(self):
         for n in nx.topological_sort(self):
-            es = max([self.node[j]['EF'] for j in self.predecessors(n)], default=0)
-            self.add_node(n, ES=es, EF=es + self.node[n]['duration'])
+            es = max([self.node[j]["EF"] for j in self.predecessors(n)], default=0)
+            self.add_node(n, ES=es, EF=es + self.node[n]["duration"])
 
     def _backward(self):
         for n in nx.topological_sort(self, reverse=True):
-            lf = min([self.node[j]['LS'] for j in self.successors(n)], default=self._critical_path_length)
-            self.add_node(n, LS=lf - self.node[n]['duration'], LF=lf)
+            lf = min(
+                [self.node[j]["LS"] for j in self.successors(n)],
+                default=self._critical_path_length,
+            )
+            self.add_node(n, LS=lf - self.node[n]["duration"], LF=lf)
 
     def _compute_critical_path(self):
         graph = set()
         for n in self:
-            if self.node[n]['EF'] == self.node[n]['LF']:
+            if self.node[n]["EF"] == self.node[n]["LF"]:
                 graph.add(n)
         self._criticalPath = self.subgraph(graph)
 
@@ -69,28 +71,31 @@ class CPM(nx.DiGraph):
     def critical_path(self):
         if self._dirty:
             self._update()
-        return sorted(self._criticalPath, key=lambda x: self.node[x]['ES'])
+        return sorted(self._criticalPath, key=lambda x: self.node[x]["ES"])
 
     def _update(self):
         self._forward()
-        self._critical_path_length = max(nx.get_node_attributes(self, 'EF').values())
+        self._critical_path_length = max(nx.get_node_attributes(self, "EF").values())
         self._backward()
         self._compute_critical_path()
         self._dirty = False
 
+
 if __name__ == "__main__":
     G = CPM()
-    G.add_node('A', duration=5)
-    G.add_node('B', duration=2)
-    G.add_node('C', duration=4)
-    G.add_node('D', duration=4)
-    G.add_node('E', duration=3)
-    G.add_node('F', duration=7)
-    G.add_node('G', duration=3)
-    G.add_node('H', duration=2)
-    G.add_node('I', duration=4)
+    G.add_node("A", duration=5)
+    G.add_node("B", duration=2)
+    G.add_node("C", duration=4)
+    G.add_node("D", duration=4)
+    G.add_node("E", duration=3)
+    G.add_node("F", duration=7)
+    G.add_node("G", duration=3)
+    G.add_node("H", duration=2)
+    G.add_node("I", duration=4)
 
-    G.add_edges_from([
+    G.add_edges_from(
+        [
+            # fmt: off
         ('A', 'C'),
         ('A', 'D'),
         ('B', 'E'),
@@ -98,11 +103,13 @@ if __name__ == "__main__":
         ('D', 'G'), ('E', 'G'),
         ('F', 'H'),
         ('C', 'I'), ('G', 'I'), ('H', 'I')
-    ])
+            # fmt: on
+        ]
+    )
 
-    print('Critical path:')
+    print("Critical path:")
     print(G.critical_path_length, G.critical_path)
 
-    G.add_node('D', duration=2)  # editing existing node
-    print('\nCrushing D, from 4 to 2, gives:')
+    G.add_node("D", duration=2)  # editing existing node
+    print("\nCrushing D, from 4 to 2, gives:")
     print(G.critical_path_length, G.critical_path)
