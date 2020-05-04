@@ -1,4 +1,12 @@
 #! python3
+#
+#
+# Critical Path Method (CPM)
+#
+# See Youtube for an overview:
+#     https://www.youtube.com/playlist?list=PLOAuB8dR35oeyKU0ojIxD8Muf6Mwc8ugW
+#
+#
 import networkx as nx
 
 
@@ -43,21 +51,21 @@ class CPM(nx.DiGraph):
 
     def _forward(self):
         for n in nx.topological_sort(self):
-            es = max([self.node[j]["EF"] for j in self.predecessors(n)], default=0)
-            self.add_node(n, ES=es, EF=es + self.node[n]["duration"])
+            es = max([self.nodes[j]["EF"] for j in self.predecessors(n)], default=0)
+            self.add_node(n, ES=es, EF=es + self.nodes[n]["duration"])
 
     def _backward(self):
-        for n in nx.topological_sort(self, reverse=True):
+        for n in reversed(list(nx.topological_sort(self))):
             lf = min(
-                [self.node[j]["LS"] for j in self.successors(n)],
+                [self.nodes[j]["LS"] for j in self.successors(n)],
                 default=self._critical_path_length,
             )
-            self.add_node(n, LS=lf - self.node[n]["duration"], LF=lf)
+            self.add_node(n, LS=lf - self.nodes[n]["duration"], LF=lf)
 
     def _compute_critical_path(self):
         graph = set()
         for n in self:
-            if self.node[n]["EF"] == self.node[n]["LF"]:
+            if self.nodes[n]["EF"] == self.nodes[n]["LF"]:
                 graph.add(n)
         self._criticalPath = self.subgraph(graph)
 
@@ -71,7 +79,7 @@ class CPM(nx.DiGraph):
     def critical_path(self):
         if self._dirty:
             self._update()
-        return sorted(self._criticalPath, key=lambda x: self.node[x]["ES"])
+        return sorted(self._criticalPath, key=lambda x: self.nodes[x]["ES"])
 
     def _update(self):
         self._forward()
@@ -95,15 +103,15 @@ if __name__ == "__main__":
 
     G.add_edges_from(
         [
-         # fmt: off
-         ('A', 'C'),
-         ('A', 'D'),
-         ('B', 'E'),
-         ('B', 'F'),
-         ('D', 'G'), ('E', 'G'),
-         ('F', 'H'),
-         ('C', 'I'), ('G', 'I'), ('H', 'I')
-         # fmt: on
+            # fmt: off
+            ('A', 'C'),
+            ('A', 'D'),
+            ('B', 'E'),
+            ('B', 'F'),
+            ('D', 'G'), ('E', 'G'),
+            ('F', 'H'),
+            ('C', 'I'), ('G', 'I'), ('H', 'I')
+            # fmt: on
         ]
     )
 
