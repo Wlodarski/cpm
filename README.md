@@ -5,7 +5,7 @@ See Youtube for an overview:
 
 -----
 
-### importing the library
+### Step 1 : Importing the library
 
 
 ```python
@@ -14,7 +14,7 @@ import networkx as nx
 
 [NetworkX](https://networkx.github.io/) is a Python package for the creation, manipulation, and study of the structure, dynamics, and functions of complex networks.
 
-### Defining the CPM
+### Step 2: Defining the CPM
 By redefining the DiGraph class to suit our purpose
 
 
@@ -98,7 +98,7 @@ class CPM(nx.DiGraph):
         self._dirty = False
 ```
 
-### Defining the nodes
+### Step 3: Defining the nodes
 
 
 ```python
@@ -114,7 +114,7 @@ G.add_node("H", duration=2)
 G.add_node("I", duration=4)
 ```
 
-### Defining the edges connecting the nodes
+### Step 4 : Defining the edges connecting the nodes
 
 
 ```python
@@ -131,7 +131,7 @@ G.add_edges_from(
 )
 ```
 
-### Solving the critical path
+### Step 5 : Solving the critical path
 
 
 ```python
