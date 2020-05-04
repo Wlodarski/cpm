@@ -154,7 +154,7 @@ G.add_node("D", duration=2)
 
 
 ```python
-print("\nCrushing D, from 4 to 2, yields:")
+print("Crushing D, from 4 to 2, yields:")
 print(G.critical_path_length, G.critical_path)
 ```
 
